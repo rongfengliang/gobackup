@@ -1,0 +1,18 @@
+version: "3"
+services:
+  monio: 
+     image: minio/minio 
+     command:  server /export
+     environment:
+      - "MINIO_ACCESS_KEY=minio"
+      - "MINIO_SECRET_KEY=minio123"
+     ports: 
+     - "9000:9000"
+  mysqldb:
+     image: mysql:5.6
+     restart: always
+     command: --character-set-server=utf8
+     ports:
+     - "3306:3306"
+     environment:
+     - MYSQL_ROOT_PASSWORD=dalong
