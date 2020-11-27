@@ -1,38 +1,12 @@
-<p align="center">
-<img src="https://gobackup.github.io/images/gobackup.svg" width="160" />
-
 
 > fork from https://github.com/huacnlee/gobackup  && and cron job && docker image
+ 
 
-<h1 align="center">GoBackup</h1>
-<p align="center">Simple tool for backup your databases, files to cloud storages.</p>
-<p align="center">
-   <a href="https://travis-ci.org/huacnlee/gobackup"><img src="https://travis-ci.org/huacnlee/gobackup.svg?branch=master" alt="Build Status" /></a>
-</p>
-</p>
-
-GoBackup is a fullstack backup tool design for web servers similar with [backup/backup](https://github.com/backup/backup), work with Crontab to backup automatically.
-
-You can write a config file, run `gobackup perform` command by once to dump database as file, archive config files, and then package them into a single file.
-
-It’s allow you store the backup file to local, FTP, SCP, S3 or other cloud storages.
-
-GoBackup 是一个类似 [backup/backup](https://github.com/backup/backup) 的一站式备份工具，为中小型服务器／个人服务器而设计，配合 Crontab 以实现定时备份的目的。
-
-使用 GoBackup 你可以通过一个简单的配置文件，一次（执行一个命令）将服务器上重要的（数据库、配置文件）东西导出、打包压缩，并备份到指定目的地（如：本地路径、FTP、云存储...）。
+ ## 参考文档
 
 详细中文介绍： https://ruby-china.org/topics/34094
 
 https://gobackup.github.io/
-
-## Features
-
-- No dependencies.
-- Multiple Databases source support.
-- Multiple Storage type support.
-- Archive paths or files into a tar.
-
-## Current Support status
 
 ### Databases
 
@@ -41,6 +15,10 @@ https://gobackup.github.io/
 - Redis - `mode: sync/copy`
 - MongoDB
 
+
+### Cron Task Running
+
+current cron with global config
 ### Archive
 
 Use `tar` command to archive many file or path into a `.tar` file.
@@ -62,14 +40,6 @@ Use `tar` command to archive many file or path into a `.tar` file.
 - [Amazon S3](https://aws.amazon.com/s3)
 - [Alibaba Cloud Object Storage Service (OSS)](https://www.alibabacloud.com/product/oss)
 
-## Install (macOS / Linux)
-
-```bash
-$ curl -sSL https://git.io/gobackup | bash
-```
-
-after that, you will get `/usr/local/bin/gobackup` command.
-
 ```bash
 $ gobackup -h
 NAME:
@@ -83,6 +53,7 @@ VERSION:
 
 COMMANDS:
      perform
+     start
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -178,18 +149,50 @@ $ gobackup perform
 
 ## Backup schedule
 
-You may want run backup in scheduly, you need Crontab:
+You may want run backup in scheduly, you need config scheduler:
 
-```bash
-$ crontab -l
-0 0 * * * /usr/local/bin/gobackup perform >> ~/.gobackup/gobackup.log
+example 
+
+```code
+scheduler:
+  cron: "0 0/2 * * *"
+models:
+  first:
+    compress_with:
+      type: tgz
+    store_with:
+      type: local
+      keep: 10
+      path: /Users/dalong/mylearning/db-back/gobackup/mydb
+    databases:
+      demo-db:
+        type: mysql
+        host: 127.0.0.1
+        port: 3306
+        database: demo
+        dumpPath: 
+        username: root
+        password: dalong
+  second:
+    compress_with:
+      type: tgz
+    store_with:
+      type: s3
+      keep: 20
+      bucket: demo
+      endpoint: http://localhost:9000
+      path: backups
+      access_key_id: minio
+      secret_access_key: minio123
+    databases:
+      mydemodb:
+        type: mysql
+        host: 127.0.0.1
+        port: 3306
+        database: demo
+        username: root
+        password: dalong
 ```
-
-> `0 0 * * *` means run at 0:00 AM, every day.
-
-And after a day, you can check up the execute status by `~/.gobackup/gobackup.log`.
-
-
 ## License
 
 MIT
