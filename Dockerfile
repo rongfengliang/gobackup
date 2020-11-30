@@ -3,7 +3,9 @@ WORKDIR /go/src/app
 ENV  GO111MODULE=on
 ENV  GOPROXY=https://goproxy.cn
 COPY . .
-RUN apk update && apk add git \
+RUN set -x \
+    && /bin/sed -i 's,http://dl-cdn.alpinelinux.org,https://mirrors.aliyun.com,g' /etc/apk/repositories \
+    && apk update && apk add git \
     && go build
 
 FROM alpine:latest
