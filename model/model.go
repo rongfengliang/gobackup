@@ -55,6 +55,8 @@ func (ctx Model) Perform() {
 		return
 	}
 
+	// Todo: add email or webhook notify
+
 }
 
 // Cleanup model temp files
