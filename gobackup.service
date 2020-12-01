@@ -5,7 +5,7 @@ Description=gobackup
 Type=simple
 User=root
 Group=root
-ExecStart=/usr/bin/gobackup 
+ExecStart=/usr/bin/gobackup  start
 Restart=always
 
 [Install]
