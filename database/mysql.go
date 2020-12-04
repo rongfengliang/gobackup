@@ -56,6 +56,9 @@ func (ctx *MySQL) perform() (err error) {
 
 func (ctx *MySQL) dumpArgs() []string {
 	dumpArgs := []string{}
+	if len(ctx.additionalOptions) > 0 {
+		dumpArgs = append(dumpArgs, ctx.additionalOptions...)
+	}
 	if len(ctx.host) > 0 {
 		dumpArgs = append(dumpArgs, "--host", ctx.host)
 	}
@@ -68,14 +71,11 @@ func (ctx *MySQL) dumpArgs() []string {
 	if len(ctx.password) > 0 {
 		dumpArgs = append(dumpArgs, `-p`+ctx.password)
 	}
-	if len(ctx.additionalOptions) > 0 {
-		dumpArgs = append(dumpArgs, ctx.additionalOptions...)
-	}
 
 	dumpArgs = append(dumpArgs, ctx.database)
 	dumpFilePath := path.Join(ctx.dumpPath, ctx.database+".sql")
 	// bugfix for mysqldump8
-	dumpArgs = append(dumpArgs, "--column-statistics=0")
+	// dumpArgs = append(dumpArgs, "--column-statistics=0")
 	dumpArgs = append(dumpArgs, "--result-file="+dumpFilePath)
 	return dumpArgs
 }
