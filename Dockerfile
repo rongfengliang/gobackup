@@ -14,4 +14,4 @@ RUN set -x \
     && apk update && apk add ca-certificates mongodb-tools mysql-client redis postgresql-client && rm -rf /var/cache/apk/*
 COPY --from=build-env /go/src/app/gobackup /usr/bin/gobackup
 COPY gobackup.yml /etc/gobackup/gobackup.yml
-ENTRYPOINT [ "gobackup" ]
+ENTRYPOINT [ "gobackup","start" ]
