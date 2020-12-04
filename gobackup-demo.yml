@@ -1,0 +1,39 @@
+scheduler:
+  cron: "* * * * *"
+models:
+  first:
+    compress_with:
+      type: tgz
+    store_with:
+      type: local
+      keep: 10
+      path: gobackup/mydb
+    databases:
+      demo-db:
+        type: mysql
+        host: 127.0.0.1
+        port: 3306
+        database: demo
+        username: root
+        password: dalong
+        additional_options: --column-statistics=0
+  second:
+    compress_with:
+      type: tgz
+    store_with:
+      type: s3
+      keep: 20
+      bucket: demo
+      endpoint: http://localhost:9000
+      path: backups
+      access_key_id: minio
+      secret_access_key: minio123
+    databases:
+      mydemodb:
+        type: mysql
+        host: 127.0.0.1
+        port: 3306
+        database: demo
+        username: root
+        password: dalong
+        additional_options: --column-statistics=0
