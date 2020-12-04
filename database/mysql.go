@@ -74,16 +74,23 @@ func (ctx *MySQL) dumpArgs() []string {
 
 	dumpArgs = append(dumpArgs, ctx.database)
 	dumpFilePath := path.Join(ctx.dumpPath, ctx.database+".sql")
-	// bugfix for mysqldump8
-	dumpArgs = append(dumpArgs, "--column-statistics=0")
 	dumpArgs = append(dumpArgs, "--result-file="+dumpFilePath)
 	return dumpArgs
 }
 
 func (ctx *MySQL) dump() error {
 	logger.Info("-> Dumping MySQL...")
-	_, err := helper.Exec("mysqldump", ctx.dumpArgs()...)
+	dumpArgs := ctx.dumpArgs()
+	_, err := helper.Exec("mysqldump", dumpArgs...)
 	if err != nil {
+		// bugfix for mysqldump8
+		if strings.Contains(err.Error(), "column-statistics") {
+			dumpArgs = append(dumpArgs, "--column-statistics=0")
+			_, err2 := helper.Exec("mysqldump", dumpArgs...)
+			if err != nil {
+				return fmt.Errorf("-> Mysqldump8 error: %s", err2)
+			}
+		}
 		return fmt.Errorf("-> Dump error: %s", err)
 	}
 	logger.Info("dump path:", ctx.dumpPath)
